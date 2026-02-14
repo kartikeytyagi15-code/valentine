@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Be My Valentine ❤️</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* BACKGROUND SLIDESHOW */
+        #backgroundSlideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bgImage {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 2s ease-in-out, transform 8s ease-in-out;
+        }
+
+        .bgImage.active {
+            opacity: 0.4;
+            transform: scale(1.1);
+        }
+
+        h1 {
+            color: white;
+            font-size: 40px;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(0,0,0,0.8);
+            z-index: 2;
+        }
+
+        .btn-container {
+            position: relative;
+            margin-top: 30px;
+            z-index: 2;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 20px;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #yes {
+            background-color: #ff4d6d;
+            color: white;
+        }
+
+        #no {
+            background-color: white;
+            color: #ff4d6d;
+            position: absolute;
+            left: 150px;
+        }
+
+        /* POPUP */
+        #popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-size: 30px;
+            text-align: center;
+            z-index: 5;
+        }
+
+        #valentineImage {
+            max-width: 320px;
+            margin-top: 20px;
+            border-radius: 20px;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* FLOATING HEARTS */
+        .heart {
+            position: fixed;
+            bottom: -10px;
+            font-size: 20px;
+            animation: floatUp 6s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100vh); opacity: 0; }
+        }
+
+        /* CONFETTI */
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            top: 0;
+            animation: fall 3s linear forwards;
+            z-index: 6;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* CINEMATIC ENDING */
+        #endingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            color: white;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            text-align: center;
+            animation: fadeIn 3s ease-in-out forwards;
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Background Slideshow -->
+<div id="backgroundSlideshow"></div>
+
+<h1>Akshara, Will you be my Valentine? ❤️</h1>
+
+<div class="btn-container">
+    <button id="yes">Yes 💖</button>
+    <button id="no">No 💔</button>
+</div>
+
+<div id="popup">
+    <p>Thank you for being my Valentine ❤️🥰</p>
+    <img id="valentineImage">
+</div>
+
+<div id="endingScreen">
+    I Love You Forever ❤️✨
+</div>
+
+<audio id="bgMusic" src="music.mp3"></audio>
+
+<script>
+
+/* BACKGROUND SLIDESHOW */
+
+let bgImages = ["bg1.jpeg","bg2.jpeg","bg3.jpeg","bg4.jpeg"];
+let bgContainer = document.getElementById("backgroundSlideshow");
+let bgIndex = 0;
+
+bgImages.forEach((src, index) => {
+    let img = document.createElement("img");
+    img.src = src;
+    img.classList.add("bgImage");
+    if(index === 0) img.classList.add("active");
+    bgContainer.appendChild(img);
+});
+
+let bgElements = document.querySelectorAll(".bgImage");
+
+function changeBackground() {
+    bgElements[bgIndex].classList.remove("active");
+    bgIndex = (bgIndex + 1) % bgImages.length;
+    bgElements[bgIndex].classList.add("active");
+}
+
+setInterval(changeBackground, 5000);
+
+/* MAIN ELEMENTS */
+
+let yesBtn = document.getElementById("yes");
+let noBtn = document.getElementById("no");
+let popup = document.getElementById("popup");
+let ending = document.getElementById("endingScreen");
+let imageElement = document.getElementById("valentineImage");
+let music = document.getElementById("bgMusic");
+
+let yesSize = 1;
+let images = ["pic1.jpeg","pic2.jpeg","pic3.jpeg","pic4.jpeg"];
+let currentIndex = 0;
+
+/* NO RUNS */
+
+noBtn.addEventListener("mouseover", function() {
+    let x = Math.random() * (window.innerWidth - 100);
+    let y = Math.random() * (window.innerHeight - 50);
+    noBtn.style.position = "fixed";
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+    yesSize += 0.3;
+    yesBtn.style.transform = "scale(" + yesSize + ")";
+});
+
+/* FLOATING HEARTS */
+
+function createHeart() {
+    let heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = Math.random() * 20 + 15 + "px";
+    heart.style.animationDuration = Math.random() * 3 + 3 + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 6000);
+}
+setInterval(createHeart, 300);
+
+/* CONFETTI */
+
+function createConfetti() {
+    for (let i = 0; i < 150; i++) {
+        let confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.backgroundColor =
+            ["#ff4d6d", "#ffffff", "#ffd700", "#00ffcc"][Math.floor(Math.random()*4)];
+        confetti.style.animationDuration = Math.random() * 3 + 2 + "s";
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 3000);
+    }
+}
+
+/* YES CLICK */
+
+yesBtn.addEventListener("click", function() {
+    popup.style.display = "flex";
+    music.play();
+    createConfetti();
+
+    imageElement.src = images[currentIndex];
+
+    let interval = setInterval(function() {
+        currentIndex++;
+        if (currentIndex < images.length) {
+
+            imageElement.style.opacity = 0;
+            setTimeout(function() {
+                imageElement.src = images[currentIndex];
+                imageElement.style.opacity = 1;
+            }, 500);
+
+        } else {
+            clearInterval(interval);
+
+            setTimeout(function(){
+                popup.style.display = "none";
+                ending.style.display = "flex";
+            }, 3000);
+        }
+    }, 2500);
+});
+
+</script>
+
+</body>
+</html>
